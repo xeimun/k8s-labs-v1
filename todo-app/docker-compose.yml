@@ -1,0 +1,45 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: todolist
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - todo-net
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8080:8080"  # Spring Boot의 기본 포트
+      - "5005:5005"  # 디버그 포트
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/todolist
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
+    networks:
+      - todo-net    
+    depends_on:
+      - mysql-db
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"  # Spring Boot의 기본 포트          
+    depends_on:
+      - backend
+    networks:
+      - todo-net
+    
+
+
+volumes:
+  mysql-data:
+
+networks:
+  todo-net:
+    driver: bridge
