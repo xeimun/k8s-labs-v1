@@ -1,0 +1,13 @@
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend-pod
+  labels:
+    app: frontend
+spec:
+  containers:
+    - name: frontend
+      image: your-dockerhub-username/k8s-labs-todo-frontend:latest # Docker Hub 사용자 이름으로 변경 필요
+      ports:
+        - containerPort: 3000
