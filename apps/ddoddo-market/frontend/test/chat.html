@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>또또마켓 WebSocket 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+      }
+      .container {
+        border: 1px solid #ccc;
+        padding: 15px;
+        border-radius: 8px;
+        width: 45%;
+      }
+      h2 {
+        margin-top: 0;
+      }
+      input[type="text"],
+      input[type="number"] {
+        width: 95%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        padding: 8px 12px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 5px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      button:disabled {
+        background-color: #aaa;
+      }
+      #logs {
+        white-space: pre-wrap;
+        background-color: #f4f4f4;
+        border: 1px solid #ddd;
+        padding: 10px;
+        height: 300px;
+        overflow-y: scroll;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>1. 연결 설정</h2>
+      <input
+        type="text"
+        id="jwt"
+        placeholder="여기에 JWT 토큰을 붙여넣으세요"
+      />
+      <button onclick="connect()">연결</button>
+      <button onclick="disconnect()" id="disconnectBtn" disabled>
+        연결 끊기
+      </button>
+    </div>
+
+    <div class="container">
+      <h2>2. 구독 및 메시지 전송</h2>
+      <div>
+        <input type="number" id="roomId" placeholder="채팅방 ID (예: 1)" />
+        <button onclick="subscribe()" id="subscribeBtn" disabled>구독</button>
+        <button onclick="unsubscribe()" id="unsubscribeBtn" disabled>
+          구독 취소
+        </button>
+      </div>
+      <div>
+        <input type="text" id="message" placeholder="보낼 메시지" />
+        <button onclick="sendMessage()" id="sendBtn" disabled>전송</button>
+      </div>
+      <h2>로그 및 수신 메시지</h2>
+      <pre id="logs"></pre>
+    </div>
+
+    <script>
+      let stompClient = null;
+      let subscription = null;
+
+      function log(message) {
+        document.getElementById("logs").innerHTML += message + "\n";
+      }
+
+      function setConnected(connected) {
+        document.getElementById("disconnectBtn").disabled = !connected;
+        document.getElementById("subscribeBtn").disabled = !connected;
+        document.getElementById("sendBtn").disabled = !connected;
+      }
+
+      function connect() {
+        const token = document.getElementById("jwt").value;
+        if (!token) {
+          alert("JWT 토큰을 입력해주세요.");
+          return;
+        }
+
+        // 1. SockJS를 사용한 웹소켓 클라이언트 생성
+        const socket = new SockJS("http://localhost:8080/ws-stomp");
+        stompClient = Stomp.over(socket);
+
+        // 2. 헤더에 JWT 토큰 설정
+        const headers = {
+          Authorization: "Bearer " + token,
+        };
+
+        // 3. 연결
+        stompClient.connect(
+          headers,
+          function (frame) {
+            log("✅ 연결 성공: " + frame);
+            setConnected(true);
+          },
+          function (error) {
+            log("❌ 연결 실패: " + error);
+          }
+        );
+      }
+
+      function disconnect() {
+        if (stompClient !== null) {
+          stompClient.disconnect(() => {
+            log("🔌 연결 끊김");
+            setConnected(false);
+            document.getElementById("unsubscribeBtn").disabled = true;
+            subscription = null;
+          });
+        }
+      }
+
+      function subscribe() {
+        const roomId = document.getElementById("roomId").value;
+        if (!roomId) {
+          alert("채팅방 ID를 입력해주세요.");
+          return;
+        }
+        const destination = "/topic/chat/room/" + roomId;
+
+        subscription = stompClient.subscribe(destination, function (message) {
+          log("📬 메시지 수신: " + message.body);
+        });
+
+        log(`📌 [${destination}] 구독 시작`);
+        document.getElementById("unsubscribeBtn").disabled = false;
+      }
+
+      function unsubscribe() {
+        if (subscription) {
+          subscription.unsubscribe();
+          log(`🚫 [${subscription.id}] 구독 취소`);
+          document.getElementById("unsubscribeBtn").disabled = true;
+          subscription = null;
+        }
+      }
+
+      function sendMessage() {
+        const roomId = document.getElementById("roomId").value;
+        const messageContent = document.getElementById("message").value;
+        if (!roomId || !messageContent) {
+          alert("채팅방 ID와 메시지를 모두 입력해주세요.");
+          return;
+        }
+
+        const destination = "/app/chat/message/" + roomId;
+        const message = {
+          message: messageContent,
+        };
+
+        stompClient.send(destination, {}, JSON.stringify(message));
+        log(`🚀 메시지 전송: ${messageContent}`);
+      }
+    </script>
+  </body>
+</html>

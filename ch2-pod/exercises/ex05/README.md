@@ -1,84 +1,52 @@
+# 실습 5: Pod의 생명주기와 재시작 정책 이해하기
 
-# 실습 5: 멀티 컨테이너 애플리케이션을 Pod로 배포하기
+이 실습에선 Pod가 생성되고 소멸되기까지의 상태(Phase) 변화를 이해하고 Pod의 `spec.restartPolicy` 설정(`Always`, `OnFailure`, `Never`)에 따라 컨테이너의 재시작 동작이 어떻게 달라지는지 실습을 통해 확인합니다.
 
-이 실습에서는 이전에 만든 `todo-list` 애플리케이션의 각 컴포넌트(frontend, backend, database)를 개별 Pod로 생성하여 멀티 컨테이너 애플리케이션을 쿠버네티스에 배포하는 경험을 합니다.
+## Pod의 생명주기
 
-**참고:** 이 실습은 Pod의 기본적인 기능만을 사용하므로, Pod가 재시작되면 데이터가 사라지고 다른 Pod와 통신할 수 없는 등 실제 운영 환경에서는 사용할 수 없는 한계점을 명확히 이해하는 것을 목표로 합니다.
+Pod는 일시적인 존재이며, 생성 후 `Pending` -> `Running` -> `Succeeded` 또는 `Failed` 와 같은 생명주기를 가집니다. 이때 컨테이너가 종료되었을 때 쿠버네티스가 어떤 조치를 취할지는 `restartPolicy`에 따라 결정됩니다.
 
-## 1. Docker 이미지 빌드 및 푸시
+## 1. `restartPolicy: OnFailure` - 실패했을 때만 재시작
 
-이 실습을 진행하기 전에 `apps/todo-list` 애플리케이션의 `frontend`와 `backend` 이미지를 빌드하고 Docker Hub와 같은 컨테이너 레지스트리에 푸시해야 합니다.
+-   컨테이너가 오류(exit code 0이 아님)를 내며 종료될 때만 재시작하는 정책입니다.
+-   아래 내용으로 `onfailure-pod.yaml` 파일을 작성합니다. 이 Pod는 10초 후 실패하며 종료됩니다.
 
-**중요:** 아래 명령어에서 `your-dockerhub-username` 부분을 실제 Docker Hub 사용자 이름으로 변경해야 합니다.
-
-### 1.1. Docker Hub 로그인
-
-```bash
-docker login
+```yaml
+# onfailure-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: onfailure-pod
+spec:
+  containers:
+  - name: failing-container
+    image: busybox:latest
+    command: ["/bin/sh", "-c", "sleep 10; exit 1"]
+  restartPolicy: OnFailure
 ```
 
-### 1.2. Backend 이미지 빌드 및 푸시
+## 2. `restartPolicy: Never` - 절대 재시작하지 않음
 
-```bash
-cd apps/todo-list/backend
-docker build -t your-dockerhub-username/k8s-labs-todo-backend:latest .
-docker push your-dockerhub-username/k8s-labs-todo-backend:latest
-cd ../../..
+컨테이너가 어떤 상태로 종료되든 절대 재시작하지 않습니다. 배치(Batch) 작업처럼 한 번 실행하고 성공적으로 종료되어야 하는 작업에 적합합니다.
+
+아래 내용으로 `never-pod.yaml` 파일을 작성합니다. 이 Pod는 5초 후 정상적으로(exit code 0) 종료됩니다.
+
+```yaml
+# never-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: never-pod
+spec:
+  containers:
+  - name: success-container
+    image: busybox:latest
+    command: ["/bin/sh", "-c", "echo 'Job Done!'; sleep 5;"]
+  restartPolicy: Never
 ```
 
-### 1.3. Frontend 이미지 빌드 및 푸시
+## 3. `restartPolicy: Always` - 항상 재시작 (기본값)
 
-```bash
-cd apps/todo-list/frontend
-docker build -t your-dockerhub-username/k8s-labs-todo-frontend:latest .
-docker push your-dockerhub-username/k8s-labs-todo-frontend:latest
-cd ../../..
-```
+`restartPolicy`를 명시하지 않으면 기본값인 `Always`가 적용됩니다. 컨테이너가 어떤 이유로든 종료되면 무조건 재시작합니다. 웹 서버처럼 항상 실행되어야 하는 서비스에 적합합니다.
 
-이제 아래 YAML 파일들에서 `your-dockerhub-username` 부분을 실제 Docker Hub 사용자 이름으로 변경해야 합니다.
-
-## 2. PostgreSQL Pod 생성
-
-데이터베이스를 위한 PostgreSQL Pod를 생성합니다. `postgres-pod.yaml` 파일을 작성하고 적용합니다.
-
-```bash
-kubectl apply -f postgres-pod.yaml
-```
-
-## 3. Backend Pod 생성
-
-애플리케이션의 백엔드 서버를 위한 Pod를 생성합니다. `backend-pod.yaml` 파일을 작성하고 적용합니다.
-
-```bash
-kubectl apply -f backend-pod.yaml
-```
-
-## 4. Frontend Pod 생성
-
-애플리케이션의 프론트엔드 UI를 위한 Pod를 생성합니다. `frontend-pod.yaml` 파일을 작성하고 적용합니다.
-
-```bash
-kubectl apply -f frontend-pod.yaml
-```
-
-## 5. Pod 상태 확인 및 한계점 고민
-
-모든 Pod들이 정상적으로 실행되는지 확인합니다.
-
-```bash
-kubectl get pods -o wide
-```
-
-- 각 Pod는 자신만의 IP 주소를 가집니다.
-- `frontend` Pod에서 `backend` Pod로 어떻게 접근할 수 있을까요?
-- `postgres-pod`가 재시작되면 데이터는 어떻게 될까요?
-
-이러한 문제점들은 다음 챕터에서 배울 `Service`, `PersistentVolume` 등을 통해 해결할 수 있습니다.
-
-## 6. Pod 삭제
-
-실습이 끝나면 아래 명령어로 모든 Pod를 삭제합니다.
-
-```bash
-kubectl delete pod --all
-```
+`never-pod.yaml` 에서 `restartPolicy` 부분만 `Always`로 변경하고(혹은 삭제하고) 다시 적용해보면, 정상적으로 종료되어도 계속 재시작되어 `CrashLoopBackOff` 상태가 되는 것을 확인할 수 있습니다.
