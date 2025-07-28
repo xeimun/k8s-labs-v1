@@ -16,7 +16,7 @@
 
 ### 과제 1: Database Deployment
 
--   **파일명:** `database-deployment.yaml`
+-   **파일명:** `db-deployment.yaml`
 -   **Deployment 이름:** `todo-db-deployment`
 -   **Pod 복제본(Replicas):** 1개
 -   **컨테이너 이미지:** `postgres:15` (이것은 공식 이미지를 그대로 사용)
@@ -28,7 +28,7 @@
 -   **파일명:** `backend-deployment.yaml`
 -   **Deployment 이름:** `todo-backend-deployment`
 -   **Pod 복제본(Replicas):** 2개
--   **컨테이너 이미지:** `your-dockerhub-username/todo-list-backend:v1.0`
+-   **컨테이너 이미지:** `your-dockerhub-username/k8s-labs-todo-backend:v1.0`
 -   **필요한 환경 변수:** `PGHOST`, `PGUSER`, `PGPASSWORD`, `PGDATABASE`, `PGPORT` (값은 `database-deployment.yaml`과 일치시키되, `PGHOST`는 아직 연결할 수 없으므로 `dummy-host`와 같은 임의의 값을 넣으세요.)
 -   **Pod 레이블:** `app: todo-backend`
 
@@ -37,7 +37,7 @@
 -   **파일명:** `frontend-deployment.yaml`
 -   **Deployment 이름:** `todo-frontend-deployment`
 -   **Pod 복제본(Replicas):** 3개
--   **컨테이너 이미지:** `your-dockerhub-username/todo-list-frontend:v1.0`
+-   **컨테이너 이미지:** `your-dockerhub-username/k8s-labs-todo-frontend:v1.0`
 -   **필요한 환경 변수:** `REACT_APP_API_URL` (아직 연결할 백엔드 주소가 없으므로 `http://dummy-backend:8080`과 같은 임의의 값을 넣으세요.)
 -   **Pod 레이블:** `app: todo-frontend`
 

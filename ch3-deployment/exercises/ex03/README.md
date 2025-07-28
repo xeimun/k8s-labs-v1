@@ -34,7 +34,7 @@ spec:
       containers:
       - name: backend
         # 본인의 v1.0 이미지 주소로 변경
-        image: your-dockerhub-username/todo-list-backend:v1.0
+        image: your-dockerhub-username/k8s-labs-todo-backend:v1.0
         ports:
         - containerPort: 8080
 ```
@@ -62,7 +62,7 @@ spec:
       containers:
       - name: backend
         # 본인의 v2.0 이미지 주소로 변경
-        image: your-dockerhub-username/todo-list-backend:v2.0
+        image: your-dockerhub-username/k8s-labs-todo-backend:v2.0
         ports:
         - containerPort: 8080
 ```
@@ -86,13 +86,13 @@ spec:
 `rollout history` 명령으로 업데이트 기록을 확인할 수 있습니다.
 
 ```bash
-kubeclt rollout history deployment backend-deployment
+kubectl rollout history deployment backend-deployment
 ```
 
 만약 `v2.0` 버전에 심각한 버그가 발견되었다면, `rollout undo` 명령으로 즉시 이전 버전으로 돌아갈 수 있습니다.
 
 ```bash
-kubeclt rollout undo deployment backend-deployment
+kubectl rollout undo deployment backend-deployment
 ```
 
 다시 관찰용 터미널을 보면, `v1.0` Pod들이 다시 생성되고 `v2.0` Pod들이 사라지는 롤백 과정이 진행됩니다.
@@ -100,5 +100,5 @@ kubeclt rollout undo deployment backend-deployment
 ### 4. 리소스 정리
 
 ```bash
-kubeclt delete deployment backend-deployment
+kubectl delete deployment backend-deployment
 ```

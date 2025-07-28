@@ -19,9 +19,9 @@
 
 이 챕터의 실습을 진행하기 전에 `apps/todo-list`의 `frontend`와 `backend` 애플리케이션을 직접 컨테이너 이미지로 빌드하고, **본인의 Docker Hub 계정**과 같은 컨테이너 레지스트리에 푸시해야 합니다.
 
-- `your-dockerhub-username/todo-list-frontend:v1.0`
-- `your-dockerhub-username/todo-list-backend:v1.0`
-- `your-dockerhub-username/todo-list-backend:v2.0`
+- `your-dockerhub-username/k8s-labs-todo-frontend:v1.0`
+- `your-dockerhub-username/k8s-labs-todo-backend:v1.0`
+- `your-dockerhub-username/k8s-labs-todo-backend:v2.0`
 
 > ❗️ 아래 모든 예제에서 `your-dockerhub-username` 부분은 실제 본인의 계정으로 수정해야 합니다.
 
@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: your-dockerhub-username/todo-list-frontend:v1.0 # 본인의 이미지 주소로 변경
+        image: your-dockerhub-username/k8s-labs-todo-frontend:v1.0 # 본인의 이미지 주소로 변경
         ports:
         - containerPort: 3000
 ```
@@ -63,8 +63,8 @@ spec:
 Deployment를 배포하고, 이 Deployment가 생성한 Pod를 확인합니다.
 
 ```bash
-kubeclt apply -f frontend-deployment.yaml
-kubeclt get pod -l app=frontend
+kubectl apply -f frontend-deployment.yaml
+kubectl get pod -l app=frontend
 # NAME                                   READY   STATUS    RESTARTS   AGE
 # frontend-deployment-5d5f8f669c-abcde   1/1     Running   0          25s
 ```
@@ -75,13 +75,13 @@ kubeclt get pod -l app=frontend
 
 ```bash
 # Pod 이름은 위에서 확인한 실제 이름으로 변경
-kubeclt delete pod frontend-deployment-5d5f8f669c-abcde
+kubectl delete pod frontend-deployment-5d5f8f669c-abcde
 ```
 
 잠시 후 다시 Pod 목록을 확인해 보세요.
 
 ```bash
-kubeclt get pod -l app=frontend
+kubectl get pod -l app=frontend
 # NAME                                   READY   STATUS    RESTARTS   AGE
 # frontend-deployment-5d5f8f669c-xyz12   1/1     Running   0          5s  <-- 새로운 Pod가 생성됨!
 ```
@@ -91,5 +91,5 @@ Deployment는 `replicas: 1` 이라는 **선언된 상태**를 유지하기 위�
 ### 4. 리소스 정리
 
 ```bash
-kubeclt delete -f frontend-deployment.yaml
+kubectl delete -f frontend-deployment.yaml
 ```

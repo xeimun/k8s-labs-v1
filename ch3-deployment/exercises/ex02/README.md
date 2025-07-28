@@ -13,8 +13,8 @@
 `ex01`에서 사용했던 `frontend-deployment.yaml`을 다시 배포합니다. (`replicas: 1`)
 
 ```bash
-kubeclt apply -f frontend-deployment.yaml
-kubeclt get pod -l app=frontend # Pod가 1개인지 확인
+kubectl apply -f frontend-deployment.yaml
+kubectl get pod -l app=frontend # Pod가 1개인지 확인
 ```
 
 ### 2. Scale Out: Pod 개수 늘리기
@@ -45,7 +45,7 @@ spec:
 ```
 
 ```bash
-kubeclt apply -f frontend-deployment.yaml
+kubectl apply -f frontend-deployment.yaml
 ```
 
 💡 **Tip:** `kubectl scale deployment frontend-deployment --replicas=3` 명령어를 사용해도 동일한 결과를 얻을 수 있지만, 항상 YAML 파일(선언)을 기준으로 관리하는 습관을 들이는 것이 좋습니다.
@@ -53,7 +53,7 @@ kubeclt apply -f frontend-deployment.yaml
 잠시 후 Pod 목록을 확인하면, 새로운 Pod 2개가 추가로 생성되어 총 3개가 실행 중인 것을 볼 수 있습니다.
 
 ```bash
-kubeclt get pod -l app=frontend
+kubectl get pod -l app=frontend
 # NAME                                   READY   STATUS    RESTARTS   AGE
 # frontend-deployment-5d5f8f669c-abcde   1/1     Running   0          5m
 # frontend-deployment-5d5f8f669c-fghij   1/1     Running   0          30s
@@ -88,7 +88,7 @@ spec:
 ```
 
 ```bash
-kubeclt apply -f frontend-deployment.yaml
+kubectl apply -f frontend-deployment.yaml
 ```
 
 Pod 목록을 확인하면, 2개의 Pod가 `Terminating` 상태가 되면서 사라지고 최종적으로 1개의 Pod만 남게 됩니다.
@@ -96,5 +96,5 @@ Pod 목록을 확인하면, 2개의 Pod가 `Terminating` 상태가 되면서 사
 ### 4. 리소스 정리
 
 ```bash
-kubeclt delete -f frontend-deployment.yaml
+kubectl delete -f frontend-deployment.yaml
 ```
