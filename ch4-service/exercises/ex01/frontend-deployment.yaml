@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        # ❗️ 이전 실습에서 사용한 본인의 Docker Hub 이미지로 변경해주세요.
+        image: your-dockerhub-username/todo-list-frontend:v1.0
+        ports:
+        - containerPort: 3000
+        env:
+        - name: REACT_APP_API_URL
+          # ❗️ Service DNS를 사용하여 Backend에 접근합니다.
+          # ❗️ http://<서비스이름>:<서비스포트>
+          value: "http://backend-service:8080"

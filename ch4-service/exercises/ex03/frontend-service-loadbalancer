@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  # ❗️ Service 타입을 LoadBalancer로 지정합니다.
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80 # 로드밸런서가 받을 포트
+      targetPort: 3000 # Pod의 컨테이너 포트
