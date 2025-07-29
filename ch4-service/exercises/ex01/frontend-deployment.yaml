@@ -19,7 +19,7 @@ spec:
           ports:
             - containerPort: 3000
           env:
-            - name: REACT_APP_API_URL
+            - name: VITE_API_URL
               # ❗️ Service DNS를 사용하여 Backend에 접근합니다.
               # ❗️ http://<서비스이름>:<서비스포트>
               value: "http://backend-service:8080"
