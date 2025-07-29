@@ -13,21 +13,21 @@ spec:
         app: backend
     spec:
       containers:
-      - name: backend
-        # ❗️ 이전 실습에서 사용한 본인의 Docker Hub 이미지로 변경해주세요.
-        image: your-dockerhub-username/todo-list-backend:v1.0
-        ports:
-        - containerPort: 8080
-        env:
-        - name: PGHOST
-          # ❗️ Service를 통해 DB에 접근할 것이므로, Service 이름을 Host로 지정해야 합니다.
-          # ❗️ (이 부분은 다음 실습에서 완성됩니다. 지금은 개념 이해에 집중합니다.)
-          value: "database-service"
-        - name: PGUSER
-          value: "user"
-        - name: PGPASSWORD
-          value: "password"
-        - name: PGDATABASE
-          value: "tododb"
-        - name: PGPORT
-          value: "5432"
+        - name: backend
+          # ❗️ 이전 실습에서 사용한 본인의 Docker Hub 이미지로 변경해주세요.
+          image: captainyun/k8s-labs-todo-backend:v1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              # ❗️ Service를 통해 DB에 접근할 것이므로, Service 이름을 Host로 지정해야 합니다.
+              # ❗️ (이 부분은 다음 실습에서 완성됩니다. 지금은 개념 이해에 집중합니다.)
+              value: "jdbc:mysql://mysql-db:3306/todolist"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "1234"
+            - name: CORS_ALLOWED_ORIGINS
+              value: "http://localhost:3000"
+            - name: JWT_SECRET
+              value: "dmVyeWxvbmcgc2VjcmV0IGtleSBmb3IgbG9jYWwgZGV2ZWxvcG1lbnQgdXNlIG9ubHkgMTIzNDU2Nzg5MA=="
