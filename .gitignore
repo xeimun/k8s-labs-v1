@@ -47,3 +47,39 @@ log/
 # Docker
 *.swp
 .dockerignore # This file itself should be committed, but adding it here as a reminder
+
+# =========================
+# Spring Boot (Java) 추가
+# =========================
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# 환경파일
+*.war
+*.jar
+
+# Eclipse
+*.classpath
+*.project
+*.settings/
+
+# 기타 Java 관련
+*.class
+bin/
+out/
+
+# Local 개발 환경 변수
+.env

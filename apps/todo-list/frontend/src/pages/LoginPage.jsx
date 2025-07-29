@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/api';
 
 function LoginPage({ setIsAuthenticated }) {
@@ -50,6 +50,12 @@ function LoginPage({ setIsAuthenticated }) {
         >
           Login
         </button>
+        <p className="text-center mt-4">
+          Don't have an account?{' '}
+          <Link to="/signup" className="text-blue-500 hover:underline">
+            Sign Up
+          </Link>
+        </p>
       </div>
     </div>
   );

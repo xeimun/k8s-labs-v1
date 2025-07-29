@@ -18,7 +18,7 @@ RUN ./gradlew build --no-daemon --parallel --continue --stacktrace -x test || tr
 COPY . .
 
 # 개발 환경에서는 디버깅 포트를 열어둡니다.
-EXPOSE 8080 5005
+EXPOSE 8080
 
 # 애플리케이션을 devtools 모드로 실행
 CMD ["./gradlew", "bootRun"]
