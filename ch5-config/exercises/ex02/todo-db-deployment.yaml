@@ -15,15 +15,15 @@ spec:
         app: todo-db
     spec:
       containers:
-      - name: mysql
-        image: mysql:8.0
-        ports:
-        - containerPort: 3306
-        envFrom:
-        - configMapRef:
-            name: todo-db-config
-        env:
-        - name: MYSQL_PASSWORD
-          value: "todo"
-        - name: MYSQL_ROOT_PASSWORD
-          value: "root"
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          envFrom:
+            - configMapRef:
+                name: todo-db-config
+          env:
+            - name: MYSQL_PASSWORD
+              value: "todo1234"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root1234"

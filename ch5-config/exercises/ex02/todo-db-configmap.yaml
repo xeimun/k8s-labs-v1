@@ -4,4 +4,4 @@ metadata:
   name: todo-db-config
 data:
   MYSQL_DATABASE: "tododb"
-  MYSQL_USER: "todo"
+  MYSQL_USER: "todouser"
