@@ -20,7 +20,7 @@
 - **Deployment 이름:** `todo-db-deployment`
 - **Pod 복제본(Replicas):** 1개
 - **컨테이너 이미지:** `mysql:8.0` (이것은 공식 이미지를 그대로 사용)
-- **필요한 환경 변수:** `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`
+- **필요한 환경 변수:** `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE` 등
 - **Pod 레이블:** `app: todo-db`
 
 ### 과제 2: Backend Deployment
@@ -29,7 +29,7 @@
 - **Deployment 이름:** `todo-backend-deployment`
 - **Pod 복제본(Replicas):** 2개
 - **컨테이너 이미지:** `your-dockerhub-username/k8s-labs-todo-backend:v1.0`
-- **필요한 환경 변수:** `PGHOST`, `PGUSER`, `PGPASSWORD`, `PGDATABASE`, `PGPORT` (값은 `database-deployment.yaml`과 일치시키되, `PGHOST`는 아직 연결할 수 없으므로 `dummy-host`와 같은 임의의 값을 넣으세요.)
+- **필요한 환경 변수:** `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD` `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `CORS_ALLOWED_ORIGINS`, `JWT_SECRET` 등
 - **Pod 레이블:** `app: todo-backend`
 
 ### 과제 3: Frontend Deployment
