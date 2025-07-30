@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: time-check-pod-persistent
+spec:
+  containers:
+    - name: time-check
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - >
+          while true; do
+            echo "$(date)" >> /data/time.txt;
+            sleep 60;
+          done
+      # 2. 컨테이너의 /data 경로에 'my-volume'을 연결합니다.
+      volumeMounts:
+        - name: my-volume
+          mountPath: /data
+  # 1. 'my-volume'이라는 이름의 볼륨을 정의합니다.
+  # 이 볼륨은 호스트 머신(Minikube)의 /tmp/k8s-data 디렉토리를 사용합니다.
+  volumes:
+    - name: my-volume
+      hostPath:
+        path: /tmp/k8s-data
+        type: DirectoryOrCreate
