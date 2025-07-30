@@ -17,21 +17,17 @@
 먼저 `ex03`의 리소스들을 다시 생성합니다.
 
 ```bash
-# ex03의 파일들이 있는 디렉토리로 이동했다고 가정
-# 또는 파일 경로를 정확히 지정해주세요.
-kubectl apply -f ../ex03/default.conf -f ../ex03/nginx-pod.yaml
-
-# Pod가 준비될 때까지 대기
-kubectl wait --for=condition=Ready pod/nginx-configmap-volume-pod
+kubectl create configmap nginx-conf --from-file=default.conf
+kubectl apply -f default.conf -f nginx-pod.yaml
 
 # 포트포워딩 실행 (새 터미널을 열어두세요)
-kubectl port-forward nginx-configmap-volume-pod 8080:80
+kubectl port-forward nginx-configmap-volume-pod 8000:80
 ```
 
 다른 터미널에서 `curl`로 확인하여 초기 상태를 점검합니다.
 
 ```bash
-curl localhost:8080
+curl localhost:8000
 # Hello, ConfigMap Volume!
 ```
 
@@ -45,17 +41,17 @@ curl localhost:8080
 # 1. default.conf 파일의 내용을 수정합니다.
 # "Hello, ConfigMap Volume!" -> "Volume Updated!"
 # (아래 명령어로 파일 내용을 간단히 덮어쓸 수 있습니다.)
-echo 'server { listen 80; server_name localhost; location / { return 200 "Volume Updated!\n"; } }' > ../ex03/default.conf
+echo 'server { listen 80; server_name localhost; location / { return 200 "Volume Updated!\n"; } }' > default.conf
 
 
 # 2. 수정된 파일 내용으로 ConfigMap을 교체합니다.
-kubectl create configmap nginx-conf --from-file=../ex03/default.conf -o yaml --dry-run=client | kubectl replace -f -
+kubectl create configmap nginx-conf --from-file=default.conf -o yaml --dry-run=client | kubectl replace -f -
 ```
 
 이제 잠시 (약 10\~20초) 기다린 후, 다시 `curl` 명령을 실행해 봅시다.
 
 ```bash
-curl localhost:8080
+curl localhost:8000
 # Volume Updated!
 ```
 
@@ -75,25 +71,23 @@ curl localhost:8080
 # ex01의 리소스들을 다시 생성합니다.
 # GREETING 값을 "안녕하세요"로 설정하여 시작합니다.
 kubectl create configmap greeting-config --from-literal=GREETING=안녕하세요
-kubectl apply -f ../ex01/pod-configmap.yaml
+kubectl apply -f pod-configmap.yaml
 ```
 
 잠시 후 로그를 확인하여 초기 상태를 점검합니다.
 
 ```bash
-# Pod가 생성될 때까지 10초 정도 대기
-sleep 10
 kubectl logs busybox-configmap-pod
 # 인사말: 안녕하세요
 ```
 
 **업데이트 및 결과 확인**
 
-이제, `greeting-config` ConfigMap의 값을 "Env Var Updated\!"로 변경해 보겠습니다.
+이제, `greeting-config` ConfigMap의 값을 "Hello!\!"로 변경해 보겠습니다.
 
 ```bash
 # ConfigMap의 값을 변경
-kubectl create configmap greeting-config --from-literal=GREETING="Env Var Updated!" -o yaml --dry-run=client | kubectl replace -f -
+kubectl create configmap greeting-config --from-literal=GREETING="Hello!!" -o yaml --dry-run=client | kubectl replace -f -
 ```
 
 ConfigMap이 변경되었습니다. 다시 Pod의 로그를 확인해 볼까요?
@@ -114,16 +108,18 @@ kubectl logs busybox-configmap-pod
 이 변경 사항을 적용하는 유일한 방법은 **Pod를 재시작**하는 것입니다.
 
 ```bash
-# Pod를 삭제하고...
+# exec로 컨테이너 접속 후 환경변수 출력하기
+kubectl exec busybox-configmap-pod -- printenv GREETING
+
+# Pod 삭제
 kubectl delete pod busybox-configmap-pod
 
 # 같은 YAML로 다시 생성합니다.
-kubectl apply -f ../ex01/pod-configmap.yaml
+kubectl apply -f pod-configmap.yaml
 
 # 잠시 후 로그를 다시 확인
-sleep 10
 kubectl logs busybox-configmap-pod
-# 인사말: Env Var Updated!
+# 인사말: Hello!!
 ```
 
 Pod가 새로 생성되면서 변경된 `ConfigMap` 값을 읽어와 환경변수를 설정했기 때문에, 이제야 새로운 메시지가 출력됩니다.
