@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim # 리소스 종류는 PVC 입니다.
+metadata:
+  name: my-pvc
+spec:
+  # 어떤 종류의 매니저를 사용할지 지정합니다. (생략 시 default 매니저 사용)
+  storageClassName: standard
+  # 접근 모드를 정의합니다. ReadWriteOnce는 한 번에 하나의 손님(Pod)만 테이블을 사용할 수 있다는 의미입니다.
+  accessModes:
+    - ReadWriteOnce
+  # 필요한 공간의 크기를 요청합니다.
+  resources:
+    requests:
+      storage: 1Gi # 1 기가바이트(GiB)를 요청합니다.

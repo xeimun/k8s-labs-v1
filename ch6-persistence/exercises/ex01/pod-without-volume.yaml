@@ -12,5 +12,5 @@ spec:
           mkdir -p /data;
           while true; do
             echo "$(date)" >> /data/time.txt;
-            sleep 60;
+            sleep 20;
           done

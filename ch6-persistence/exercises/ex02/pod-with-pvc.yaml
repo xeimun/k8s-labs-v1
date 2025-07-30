@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: time-check-pod-pvc
+spec:
+  containers:
+    - name: time-check
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - >
+          mkdir -p /data;
+          while true; do
+            echo "$(date)" >> /data/time.txt;
+            sleep 20;
+          done
+      volumeMounts:
+        - name: my-storage # 아래 volumes에서 정의한 볼륨 이름
+          mountPath: /data
+  volumes:
+    - name: my-storage
+      # hostPath 대신 persistentVolumeClaim을 사용합니다.
+      persistentVolumeClaim:
+        # claimName에 우리가 만든 PVC의 이름을 적어줍니다.
+        claimName: my-pvc
