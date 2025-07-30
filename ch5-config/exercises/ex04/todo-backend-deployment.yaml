@@ -17,17 +17,12 @@ spec:
       containers:
         - name: backend
           image: captainyun/k8s-labs-todo-backend:v1.0
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://todo-db-svc:3306/tododb?useSSL=false"
-            - name: SPRING_JPA_DATABASE_PLATFORM
-              value: "org.hibernate.dialect.MySQLDialect"
-            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
-              value: "update"
-            - name: SPRING_JPA_SHOW_SQL
-              value: "true"
+            - name: DB_HOST
+              value: "todo-db-svc"
           envFrom:
             - configMapRef:
                 name: todo-db-config

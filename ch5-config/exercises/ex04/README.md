@@ -44,7 +44,7 @@ env:
 # --from-literal을 사용하여 Key-Value 쌍을 직접 전달
 kubectl create secret generic todo-db-secret \
   --from-literal=MYSQL_PASSWORD=todo \
-  --from-literal=MYSQL_ROOT_PASSWORD=root
+  --from-literal=MYSQL_ROOT_PASSWORD=root1234
 
 # 생성된 Secret 확인
 kubectl get secret todo-db-secret
