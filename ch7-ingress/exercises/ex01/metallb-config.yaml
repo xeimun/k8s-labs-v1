@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # 이 ConfigMap은 반드시 metallb-system 네임스페이스에 만들어야 합니다.
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - 192.168.49.50-192.168.49.99
+
+  # ⭐️ 중요: 이 범위를 여러분의 'minikube ip' 대역에 맞게 수정하세요.
+  # 예: minikube ip가 192.168.49.2 였다면 아래처럼 설정합니다.
