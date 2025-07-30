@@ -4,15 +4,15 @@ metadata:
   name: busybox-hardcoded-pod
 spec:
   containers:
-  - name: busybox
-    image: busybox:1.28
-    command: ["/bin/sh", "-c"]
-    args:
-      - while true; do
+    - name: busybox
+      image: busybox:1.28
+      command: ["/bin/sh", "-c"]
+      args:
+        - while true; do
           echo "인사말 $(GREETING)";
           sleep 10;
-        done
-    env:
-    - name: GREETING
-      value: "hello"
+          done
+      env:
+        - name: GREETING
+          value: "hi"
   restartPolicy: Never

@@ -4,18 +4,18 @@ metadata:
   name: busybox-configmap-pod
 spec:
   containers:
-  - name: busybox
-    image: busybox:1.28
-    command: ["/bin/sh", "-c"]
-    args:
-      - while true; do
+    - name: busybox
+      image: busybox:1.28
+      command: ["/bin/sh", "-c"]
+      args:
+        - while true; do
           echo "인사말 $(GREETING)";
           sleep 10;
-        done
-    env:
-    - name: GREETING
-      valueFrom:
-        configMapKeyRef:
-          name: greeting-config
-          key: GREETING
+          done
+      env:
+        - name: GREETING
+          valueFrom:
+            configMapKeyRef:
+              name: greeting-config
+              key: GREETING
   restartPolicy: Never
