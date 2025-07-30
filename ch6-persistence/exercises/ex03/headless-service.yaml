@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-headless-svc
+spec:
+  # clusterIP: None 으로 설정하는 것이 Headless 서비스의 핵심입니다.
+  clusterIP: None
+  selector:
+    # 이 서비스가 어떤 Pod들을 관리할지 라벨로 지정합니다.
+    app: nginx-ss
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

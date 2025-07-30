@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet # 리소스 종류는 StatefulSet 입니다.
+metadata:
+  name: nginx-ss
+spec:
+  # serviceName에 위에서 만든 Headless 서비스의 이름을 정확히 적어줍니다.
+  serviceName: "my-headless-svc"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-ss # 이 라벨은 Headless 서비스의 selector와 일치해야 합니다.
+  template:
+    metadata:
+      labels:
+        app: nginx-ss
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: data # 아래 volumeClaimTemplates의 이름과 일치해야 합니다.
+          mountPath: /usr/share/nginx/html
+  # 이 부분이 StatefulSet의 핵심입니다.
+  # 각 Pod을 위한 PVC를 자동으로 생성해주는 템플릿입니다.
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard" # ex02에서 확인한 StorageClass
+      resources:
+        requests:
+          storage: 1Gi
