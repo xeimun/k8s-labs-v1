@@ -6,15 +6,15 @@
 
 이번 실습에서는 `a.example.com`과 `b.example.com`이라는 가상의 도메인을 만들고, 각 도메인으로 들어오는 요청을 서로 다른 서비스로 라우팅하는 방법을 배워보겠습니다.
 
------
+---
 
-### 📂 이그잼플 파일
+### 📂 예제 파일
 
-| 파일명 | 설명 |
-| :--- | :--- |
+| 파일명                    | 설명                                            |
+| :------------------------ | :---------------------------------------------- |
 | `ingress-host-based.yaml` | 호스트 기반 라우팅 규칙이 정의된 Ingress 리소스 |
 
------
+---
 
 ### 🎯 학습 목표
 
@@ -23,7 +23,7 @@
 3.  Ingress 리소스에 `spec.rules.host`를 사용하여 호스트 기반 규칙을 작성할 수 있다.
 4.  가상 도메인 이름을 사용하여 라우팅이 정상적으로 동작하는 것을 검증할 수 있다.
 
------
+---
 
 ## 1\. Step 1: 로컬 PC에 가상 도메인 만들기 (`hosts` 파일 수정)
 
@@ -33,15 +33,15 @@
 
 **⚠️ 중요:** `hosts` 파일을 수정하려면 관리자 권한이 필요합니다.
 
-  * **Windows:**
+- **Windows:**
 
-    1.  '메모장(Notepad)'을 **'관리자 권한으로 실행'** 합니다.
-    2.  `파일 > 열기`를 선택하고 `C:\Windows\System32\drivers\etc` 경로로 이동합니다.
-    3.  파일 형식을 '모든 파일'로 변경한 뒤 `hosts` 파일을 엽니다.
+  1.  '메모장(Notepad)'을 **'관리자 권한으로 실행'** 합니다.
+  2.  `파일 > 열기`를 선택하고 `C:\Windows\System32\drivers\etc` 경로로 이동합니다.
+  3.  파일 형식을 '모든 파일'로 변경한 뒤 `hosts` 파일을 엽니다.
 
-  * **macOS / Linux:**
+- **macOS / Linux:**
 
-    1.  터미널을 열고 `sudo nano /etc/hosts` 명령어를 입력합니다.
+  1.  터미널을 열고 `sudo nano /etc/hosts` 명령어를 입력합니다.
 
 `hosts` 파일을 열었다면, 파일의 맨 아래에 다음 두 줄을 추가하고 저장하세요.
 
@@ -66,33 +66,33 @@ metadata:
   name: my-ingress-host-based
 spec:
   rules:
-  # --- 첫 번째 호스트 규칙 ---
-  - host: a.example.com # a.example.com 으로 들어온 요청은
-    http:
-      paths:
-      - path: / # 모든 경로에 대해
-        pathType: Prefix
-        backend:
-          service:
-            name: hello-service # hello-service 로 보낸다.
-            port:
-              number: 80
-  # --- 두 번째 호스트 규칙 ---
-  - host: b.example.com # b.example.com 으로 들어온 요청은
-    http:
-      paths:
-      - path: / # 모든 경로에 대해
-        pathType: Prefix
-        backend:
-          service:
-            name: world-service # world-service 로 보낸다.
-            port:
-              number: 80
+    # --- 첫 번째 호스트 규칙 ---
+    - host: a.example.com # a.example.com 으로 들어온 요청은
+      http:
+        paths:
+          - path: / # 모든 경로에 대해
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-service # hello-service 로 보낸다.
+                port:
+                  number: 80
+    # --- 두 번째 호스트 규칙 ---
+    - host: b.example.com # b.example.com 으로 들어온 요청은
+      http:
+        paths:
+          - path: / # 모든 경로에 대해
+            pathType: Prefix
+            backend:
+              service:
+                name: world-service # world-service 로 보낸다.
+                port:
+                  number: 80
 ```
 
-  * **`spec.rules`:** `ex03`과 달리, 이번에는 `host` 필드를 명시한 두 개의 별도 규칙을 배열에 넣었습니다.
-  * **`path: /`:** 각 호스트로 들어온 모든 경로의 요청을 해당 서비스로 전달하겠다는 의미입니다.
-  * 이번 예제에서는 경로 재작성이 필요 없으므로 `rewrite-target` 어노테이션은 사용하지 않았습니다.
+- **`spec.rules`:** `ex03`과 달리, 이번에는 `host` 필드를 명시한 두 개의 별도 규칙을 배열에 넣었습니다.
+- **`path: /`:** 각 호스트로 들어온 모든 경로의 요청을 해당 서비스로 전달하겠다는 의미입니다.
+- 이번 예제에서는 경로 재작성이 필요 없으므로 `rewrite-target` 어노테이션은 사용하지 않았습니다.
 
 ## 3\. Step 3: Ingress 배포 및 테스트하기
 
@@ -114,14 +114,14 @@ spec:
 
     ```bash
     # 1. a.example.com 으로 요청 보내기
-    curl http://a.example.com
+    curl http://a.example.com:8000
 
     # 예상 출력:
     # Hello, world! Version: 1.0.0
     # Hostname: hello-deployment-xxxxxxxxxx-xxxxx
 
     # 2. b.example.com 으로 요청 보내기
-    curl http://b.example.com
+    curl http://b.example.com:8000
 
     # 예상 출력:
     # Hello, world! Version: 2.0.0
@@ -133,12 +133,10 @@ spec:
 **결과 분석:**
 두 요청 모두 동일한 IP(`127.0.0.1`)로 전달되었지만, Ingress Controller가 HTTP 요청 헤더의 `Host` 값을 읽고 우리가 정의한 규칙에 따라 요청을 올바른 서비스로 정확하게 라우팅했습니다.
 
------
+---
 
 ### ⭐ 핵심 정리
 
-  - **호스트 기반 라우팅**은 `spec.rules.host` 필드를 사용하여 특정 도메인으로 들어오는 요청을 지정된 서비스로 전달하는 방식이다.
-  - 로컬 개발 환경에서는 **`hosts` 파일을 수정**하여 실제 도메인 없이도 호스트 기반 라우팅을 테스트할 수 있다.
-  - 경로 기반 라우팅과 호스트 기반 라우팅을 조합하면, 단일 IP 주소 위에서 매우 복잡하고 유연한 트래픽 관리 정책을 만들 수 있다.
-
-이제 Ingress의 두 가지 핵심 라우팅 방법을 모두 배웠습니다. `labs`에서는 이 두 가지 개념을 모두 활용하여 우리의 프로젝트에 적용해 보겠습니다.
+- **호스트 기반 라우팅**은 `spec.rules.host` 필드를 사용하여 특정 도메인으로 들어오는 요청을 지정된 서비스로 전달하는 방식이다.
+- 로컬 개발 환경에서는 **`hosts` 파일을 수정**하여 실제 도메인 없이도 호스트 기반 라우팅을 테스트할 수 있다.
+- 경로 기반 라우팅과 호스트 기반 라우팅을 조합하면, 단일 IP 주소 위에서 매우 복잡하고 유연한 트래픽 관리 정책을 만들 수 있다.

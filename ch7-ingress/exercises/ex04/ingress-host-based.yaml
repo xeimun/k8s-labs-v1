@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress-host-based
+spec:
+  rules:
+    # --- 첫 번째 호스트 규칙 ---
+    - host: a.example.com # a.example.com 으로 들어온 요청은
+      http:
+        paths:
+          - path: / # 모든 경로에 대해
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-service # hello-service 로 보낸다.
+                port:
+                  number: 80
+    # --- 두 번째 호스트 규칙 ---
+    - host: b.example.com # b.example.com 으로 들어온 요청은
+      http:
+        paths:
+          - path: / # 모든 경로에 대해
+            pathType: Prefix
+            backend:
+              service:
+                name: world-service # world-service 로 보낸다.
+                port:
+                  number: 80

@@ -46,7 +46,7 @@ spec:
           mkdir -p /data;
           while true; do
             echo "$(date)" > /data/time.txt;
-            sleep 60;
+            sleep 20;
           done
 ```
 
@@ -126,7 +126,7 @@ spec:
         - >
           while true; do
             echo "$(date)" >> /data/time.txt;
-            sleep 60;
+            sleep 20;
           done
       # 2. 컨테이너의 /data 경로에 'my-volume'을 연결합니다.
       volumeMounts:
