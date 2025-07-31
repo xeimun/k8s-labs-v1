@@ -1,0 +1,12 @@
+{
+  "name": "buggy-app",
+  "version": "1.0.0",
+  "description": "A buggy Node.js app to demonstrate liveness probes",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
