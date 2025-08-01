@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: qos-burstable
+spec:
+  containers:
+  - name: main-container
+    image: captainyun/resource-app:v1.0
+    ports:
+    - containerPort: 8080
+    resources:
+      limits:
+        memory: "400Mi"
+      requests:
+        memory: "200Mi" # 어느 정도 보장은 받음

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: qos-besteffort
+spec:
+  containers:
+  - name: main-container
+    image: captainyun/resource-app:v1.0
+    ports:
+    - containerPort: 8080
+    # resources 섹션 없음

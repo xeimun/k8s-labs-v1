@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: qos-guaranteed
+spec:
+  containers:
+  - name: main-container
+    image: captainyun/resource-app:v1.0
+    resources:
+      limits:
+        memory: "100Mi"
+        cpu: "100m"
+      requests:
+        memory: "100Mi"
+        cpu: "100m"
