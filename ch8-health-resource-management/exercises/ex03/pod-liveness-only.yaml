@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: slow-app-liveness-only
+spec:
+  containers:
+  - name: slow-app-container    
+    image: captainyun/startup-app:v1.0
+    ports:
+    - containerPort: 8080
+    env:
+    - name: HOSTNAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      # 앱 시작(60초)보다 짧은 시간 내에 실패하도록 설정
+      failureThreshold: 3
+      periodSeconds: 10 # 10초마다 검사, 3번 실패하면(30초) 재시작

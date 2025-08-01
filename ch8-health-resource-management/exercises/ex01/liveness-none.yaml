@@ -6,9 +6,7 @@ metadata:
     app: buggy
 spec:
   containers:
-    - name: buggy-container
-      # 중요: 실제 교육 시에는 학생들이 직접 빌드한 이미지 주소로 변경해야 합니다.
-      # 예: image: your-dockerhub-id/buggy-node-app:1.0
-      image: captainyun/buggy-node-app:1.0 # 수업 편의를 위한 예제 이미지
+    - name: buggy-container      
+      image: captainyun/buggy-node-app:v1.0
       ports:
         - containerPort: 8080

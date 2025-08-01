@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readiness-demo-deployment
+spec:
+  replicas: 2
+  strategy: # 롤링 업데이트 전략을 명시적으로 보여줌
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1 # 업데이트 중 사용 불가능한 Pod는 최대 1개
+      maxSurge: 1       # 업데이트 중 추가로 생성할 수 있는 Pod는 최대 1개
+  selector:
+    matchLabels:
+      app: readiness-app
+  template:
+    metadata:
+      labels:
+        app: readiness-app
+    spec:
+      containers:
+      - name: readiness-container        
+        image: captainyun/readiness-app:v1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5  # Pod 시작 후 5초 뒤부터 검사 시작
+          periodSeconds: 3      # 3초마다 검사
+          failureThreshold: 4   # 4번(3*4=12초) 실패까지는 기다려줌

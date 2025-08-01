@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: slow-app-with-startup
+spec:
+  containers:
+  - name: slow-app-container    
+    image: captainyun/startup-app:v1.0
+    ports:
+    - containerPort: 8080
+    env:
+    - name: HOSTNAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      # 일단 앱이 시작된 후에는 빠르게 실패를 감지하도록 설정
+      failureThreshold: 3
+      periodSeconds: 10
+    startupProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      # 앱 시작(60초)을 충분히 기다려주도록 설정 (15 * 10초 = 150초)
+      failureThreshold: 15
+      periodSeconds: 10

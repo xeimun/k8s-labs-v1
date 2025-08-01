@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-eater-no-limits
+spec:
+  containers:
+  - name: memory-eater-container    
+    image: captainyun/resource-app:v1.0
+    ports:
+    - containerPort: 8080

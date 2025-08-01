@@ -1,0 +1,12 @@
+{
+  "name": "readiness-app",
+  "version": "1.0.0",
+  "description": "A slow-starting app to demonstrate readiness probes",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

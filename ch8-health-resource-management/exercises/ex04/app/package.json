@@ -1,0 +1,12 @@
+{
+  "name": "resource-app",
+  "version": "1.0.0",
+  "description": "An app to demonstrate resource requests and limits",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
