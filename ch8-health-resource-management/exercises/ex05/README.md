@@ -1,4 +1,4 @@
-# ex05: Quality of Service (QoS) - 내 Pod는 얼마나 중요할까?
+# 실습 5: Quality of Service (QoS) - 내 Pod는 얼마나 중요할까?
 
 ### 🎯 학습 목표
 1. `requests`와 `limits` 설정에 따라 쿠버네티스가 Pod에 부여하는 3가지 QoS 클래스(`Guaranteed`, `Burstable`, `BestEffort`)를 이해한다.

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-backend
+  template:
+    metadata:
+      labels:
+        app: todo-backend
+    spec:
+      containers:
+      - name: todo-backend
+        image: captainyun/k8s-labs-todo-backend:v1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: "todo-service"
+        envFrom:
+        - configMapRef:
+            name: todo-db-configmap
+        - secretRef:
+            name: todo-db-secret
