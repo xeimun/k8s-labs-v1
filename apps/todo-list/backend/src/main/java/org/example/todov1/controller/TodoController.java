@@ -49,7 +49,7 @@ public class TodoController {
 
     @GetMapping("/ping")
     public String ping() {
-        return "pong";
+        return "pong - CI/CD demo v1";
     }
 }
 
