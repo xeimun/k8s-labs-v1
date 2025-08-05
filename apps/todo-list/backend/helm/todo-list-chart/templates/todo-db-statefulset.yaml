@@ -7,15 +7,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "todo-list-chart.name" . }}-db
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "todo-list-chart.database.selectorLabels" . | nindent 6 }}
   serviceName: "todo-db-service"
   replicas: 1
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "todo-list-chart.name" . }}-db
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- include "todo-list-chart.database.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - name: mysql

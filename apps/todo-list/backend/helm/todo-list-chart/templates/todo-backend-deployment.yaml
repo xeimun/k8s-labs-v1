@@ -21,7 +21,7 @@ spec:
             - containerPort: 8080
           env:
             - name: DB_HOST
-              value: "todo-service"
+              value: "todo-db-service"
             - name: CORS_ALLOWED_ORIGINS
               value: {{ .Values.backend.cors_allowed_origins }}
           envFrom:
