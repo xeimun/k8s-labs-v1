@@ -27,39 +27,69 @@ CI 파이프라인이 Docker Hub에 로그인하려면 인증 정보가 필요�
 ```yaml
 # .github/workflows/ci-backend.yml
 
-# 워크플로우의 이름
 name: CI for Todo List Backend
 
 # 워크플로우가 실행될 조건 (Triggers)
 on:
   push:
-    branches: [ "main" ] # 1. main 브랜치에 push 이벤트가 발생했을 때
+    branches: ["main"]
     paths:
-      - 'apps/todo-list/backend/**' # 2. 변경된 파일이 'apps/todo-list/backend/' 디렉토리 하위에 있을 때만
+      - "apps/todo-list/backend/**"
 
 # 실행될 작업(Job)들
 jobs:
   build-and-push:
-    # 작업이 실행될 가상 환경
     runs-on: ubuntu-latest
-
-    # 작업의 단계(Step)들
     steps:
       # 1. 소스 코드 체크아웃
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # 2. Docker Hub에 로그인
+      # 2. JDK 17 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      # 3. Gradle 캐싱
+      - name: Gradle Caching
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 4. gradlew에 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        working-directory: ./apps/todo-list/backend
+
+      # 5. Gradle로 프로젝트 빌드
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+        working-directory: ./apps/todo-list/backend
+
+      # 6. Docker Hub에 로그인
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 3. Docker 이미지 빌드 및 푸시
+      # 7. Docker 이미지 빌드 및 푸시
       - name: Build and push Docker image
+        id: build-push
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/todo-list/backend # Docker 빌드 컨텍스트 경로
-          push: true # 빌드 후 푸시 실행
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-list-backend:latest # 이미지 태그 설정 (예: my-docker-id/todo-list-backend:latest)
+          context: ./apps/todo-list/backend
+          file: ./apps/todo-list/backend/Dockerfile.prod
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/k8s-labs-todo-backend:${{ github.sha }}
+
+      # 8. 생성된 이미지 태그 출력
+      - name: Print image tag
+        run: echo "Image tagged with:${{ secrets.DOCKERHUB_USERNAME }}/k8s-labs-todo-backend:${{ github.sha }}"
