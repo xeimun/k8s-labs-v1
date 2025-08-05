@@ -51,15 +51,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 7. Docker 이미지 빌드 및 푸시
+      # 7-1. 7자리 SHA를 환경변수로 저장
+      - name: Export short SHA
+        id: vars
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      # 7-2. Docker 이미지 빌드 및 푸시
       - name: Build and push Docker image
-        id: build-push
         uses: docker/build-push-action@v5
         with:
           context: ./apps/todo-list/backend
           file: ./apps/todo-list/backend/Dockerfile.prod
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/k8s-labs-todo-backend:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/k8s-labs-todo-backend:${{ steps.vars.outputs.SHORT_SHA }}
 
       # 8. 생성된 이미지 태그 출력
       - name: Print image tag
@@ -93,12 +97,12 @@ jobs:
           fi
 
           # 3) image.tag 파라미터 업데이트 (직접 치환 방식)
-          yq e "(.spec.source.helm.parameters[] | select(.name == \"image.tag\") | .value) = \"$NEW_TAG\"" \
+          yq e "(.spec.source.helm.parameters[] | select(.name == \"backend.image.tag\") | .value) = \"$NEW_TAG\"" \
             -i manifests/todo-list-application.yaml
 
           # 4) 결과 확인
           echo "Updated manifest:"
-          yq e '.spec.source.helm.parameters[] | select(.name == "image.tag")' \
+          yq e '.spec.source.helm.parameters[] | select(.name == "backend.image.tag")' \
             manifests/todo-list-application.yaml
 
           
