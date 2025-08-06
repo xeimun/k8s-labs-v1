@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ddoddo-market-db-service  # ✅ 반드시 StatefulSet.spec.serviceName과 동일해야 함
+spec:
+  clusterIP: None  # ✅ Headless 설정 (StatefulSet Pod의 DNS 주소 생성을 위해 필수)
+  selector:
+    app: ddoddo-db  # ✅ StatefulSet Pod의 label과 일치해야 연결됨
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432  # ✅ DB 컨테이너에서 사용하는 포트

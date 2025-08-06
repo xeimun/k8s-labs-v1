@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  DB_URL: "jdbc:postgresql://ddoddo-market-db-service:5432/ddoddo_market_db"
+  DB_USERNAME: "root"
+
+  JWT_SET_URI: "https://mtlibbxngzujgdzlhonx.supabase.co/auth/v1/jwks"
+  CLOUDFLARE_R2_BUCKET_NAME: "ddoddo-market-images"
+  CLOUDFLARE_ACCOUNT_ID: "b1a90b67b85de872ba3445d7438bb476"
+  CLOUDFLARE_R2_PUBLIC_URL: "https://pub-24f25b071d6d4f04b7a072d3d06791b8.r2.dev"
+
+  DDL_AUTO: "create"
+  SHOW_SQL: "true"

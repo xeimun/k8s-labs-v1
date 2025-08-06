@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: todo-db-configmap
+data:
+    MYSQL_DATABASE: {{ .Values.database.name }}
+    MYSQL_USER: {{ .Values.database.user }}

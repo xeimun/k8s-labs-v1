@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ddoddo-db
+spec:
+  serviceName: ddoddo-market-db-service  # ✅ 위의 Headless Service 이름과 반드시 동일해야 함
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ddoddo-db  # ✅ 아래 template.metadata.labels 와 일치해야 함
+  template:
+    metadata:
+      labels:
+        app: ddoddo-db  # ✅ 위의 selector.matchLabels 와 일치해야 함
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432  # ✅ 외부에서 접근할 포트
+          envFrom:
+            - secretRef:
+                name: postgres-secret  # ✅ DB 설정 주입 (Secret 리소스 필요)
+          volumeMounts:
+            - name: postgres-data  # ✅ 아래 volumeClaimTemplates.metadata.name 과 일치해야 함
+              mountPath: /var/lib/postgresql/data  # ✅ PostgreSQL 데이터 디렉토리 (반드시 정확해야 데이터 유지됨)
+
+          # ✅ PostgreSQL이 느리게 시작하는 것을 감안한 startupProbe
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "PGPASSWORD=$POSTGRES_PASSWORD pg_isready -h localhost -U $POSTGRES_USER"
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 10
+
+          # ✅ DB가 실행 중인지 정기적으로 확인하는 livenessProbe
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "PGPASSWORD=$POSTGRES_PASSWORD pg_isready -h localhost -U $POSTGRES_USER"
+            periodSeconds: 30
+            failureThreshold: 3
+
+          # ✅ Guaranteed QoS를 위한 리소스 설정 (요청 = 제한)
+          resources:
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data  # ✅ 위의 volumeMounts.name 과 반드시 일치해야 함
+      spec:
+        accessModes: ["ReadWriteOnce"]  # ✅ DB는 단일 Pod가 접근하므로 RWO 사용
+        resources:
+          requests:
+            storage: 1Gi  # ✅ 실제 PVC 용량 (필요한 만큼 설정)

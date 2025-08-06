@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: captainyun/ddoddo-market-frontend:v1.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_SUPABASE_URL
+              value: "https://mtlibbxngzujgdzlhonx.supabase.co"
+            - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+              value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10bGliYnhuZ3p1amdkemxob254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyODc5NjMsImV4cCI6MjA2Njg2Mzk2M30.EPMdXI3fBdAOgjRU0wpbuz5E36aUk--PtgBSv3wD0_A"
+            - name: NEXT_PUBLIC_API_BASE_URL
+              value: "http://localhost:8080"

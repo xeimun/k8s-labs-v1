@@ -1,8 +1,10 @@
 backend:
-  replicaCount: 2
+  replicasCount: 2
   image:
     repository: captainyun/k8s-labs-todo-backend
     tag: v1.0
+  deployment:
+    cors_allowed_origins: "http://localhost:3000"
   service:
     type: NodePort
     port: 8080
@@ -10,7 +12,6 @@ backend:
     nodePort:
       enabled: true
       port: 30001
-  cors_allowed_origins: http://localhost:3000
 
 database:
   name: tododb

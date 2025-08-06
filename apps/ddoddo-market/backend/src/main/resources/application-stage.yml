@@ -1,0 +1,57 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWT_SET_URI:uri}
+          secret-key: ${JWT_SECRET_KEY:secret}
+  # 데이터베이스 연결 정보
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ddoddo_market_db}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:pass1234}
+  # JPA(Hibernate) 설정
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: ${SHOW_SQL:false}
+
+# Cloudflare R2 설정
+cloud:
+  aws:
+    credentials:
+      access-key: ${CLOUDFLARE_ACCESS_KEY_ID}
+      secret-key: ${CLOUDFLARE_SECRET_ACCESS_KEY}
+    s3:
+      enabled: false
+      bucket: ${CLOUDFLARE_R2_BUCKET_NAME} # 예: ddoddo-market-images
+      endpoint: https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com # S3 호환 엔드포인트
+      # R2 버킷의 공개 URL
+      public-url: ${CLOUDFLARE_R2_PUBLIC_URL} # 예: https://pub-xxxxxxxx.r2.dev
+    region:
+      static: us-east-1 # R2는 'auto' 리전을 사용합니다.
+    stack:
+      auto: false
+
+# CORS 전역 설정
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+  allowed-headers: ${CORS_ALLOWED_HEADERS:Authorization,Content-Type}
+
+# 로깅 설정 추가
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    com.ddoddo.backend: DEBUG
+    # AWS SDK v2의 요청/응답 상세 로깅 활성화
+    software.amazon.awssdk.request: DEBUG
+    # AWS SDK가 내부적으로 사용하는 Apache HttpClient의 모든 통신 내용(wire) 로깅 활성화
+    org.apache.http.wire: DEBUG
+    # 스프링의 STOMP 메시징 관련 로그를 DEBUG 레벨로 설정
+    org.springframework.messaging: DEBUG
+    # 웹소켓 관련 상세 로그를 TRACE 레벨(가장 상세)로 설정
+    org.springframework.web.socket: TRACE
+    # 우리가 만든 StompHandler의 로그를 DEBUG 레벨로 설정
+    com.ddoddo.backend.config: DEBUG

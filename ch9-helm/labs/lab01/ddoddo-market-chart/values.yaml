@@ -1,0 +1,49 @@
+# values.yaml
+frontend:
+  replicaCount: 1
+  image:
+    repository: your-docker-id/ddoddo-frontend
+    tag: "1.0"
+  service:
+    type: ClusterIP
+    port: 3000
+
+backend:
+  replicaCount: 1
+  image:
+    repository: your-docker-id/ddoddo-backend
+    tag: "1.0"
+  service:
+    type: ClusterIP
+    port: 8080
+  # 백엔드가 DB에 접속하기 위한 정보
+  db:
+    host: "ddoddo-db-service"
+
+database:
+  image:
+    repository: postgres
+    tag: "15"
+  # DB 접속 정보 (Secret으로 관리될 값들)
+  auth:
+    username: "user"
+    password: "password"
+    database: "ddoddo"
+  # PVC 설정
+  persistence:
+    size: 2Gi
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              # 이 부분은 템플릿에서 동적으로 생성될 프론트엔드 서비스 이름을 가리켜야 합니다.
+              name: # placeholder
+              port:
+                number: 3000

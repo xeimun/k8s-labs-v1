@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backend-server-ingress
+spec:
+  ingressClassName: nginx  # ✅ Ingress-NGINX 컨트롤러를 사용하겠다는 명시 (필수!)
+  rules:
+    - host: 127.0.0.1.nip.io  # ✅ 공통 도메인
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-server-service  # ✅ 백엔드 서비스
+                port:
+                  number: 8080
+
+          - path: /front
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service        # ✅ 프론트엔드 서비스
+                port:
+                  number: 3000

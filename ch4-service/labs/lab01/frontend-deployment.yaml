@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: captainyun/k8s-labs-todo-frontend:v1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: VITE_API_URL
+              # ❗️ Service DNS를 사용하여 Backend에 접근합니다.
+              # ❗️ http://<서비스이름>:<서비스포트>
+              value: "http://localhost:8080"
